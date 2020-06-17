@@ -14,8 +14,119 @@ const teamMembers = []
 
 function menu () {
     function createManager () {
-        
+        console.log("Build your team here!");
+        inquirer.prompt([
+            {
+                type: "input" ,
+                name: "managerName",
+                message: "What is your manager's name?"
+            },
+            {
+                type: "input",
+                name: "managerID",
+                message: "What is your manager ID?"
+            },
+            {
+                type: "input",
+                name: "managerEmail",
+                message: "What is your manager's email?"
+            },
+            {
+                type: "input",
+                name: "managerOfficeNumber",
+                message: "What is your manager's office number?"
+            }
+        ]).then(response =>{
+            const manager = new Manager (response.managerName,response.managerID,response.managerEmail,response.managerOfficeNumber)
+            teamMembers.push (manager)
+            createTeam ()
+        })
     }
+    function createTeam () {
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "memberChoice",
+                message: "Which type of team member would you like to add?",
+                choices: ["Engineer","Intern","i don't want to add anymore team members"]
+            }
+        ]).then(response => {
+            switch(response.memberChoice) {
+                case "Engineer": 
+                addEngineer()
+                break;
+                case "Intern":
+                addIntern()
+                break;
+                default: 
+                buildTeam()
+            }
+        })
+    }
+    function addEngineer () {
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "engineerName",
+                message: "What is your engineer's name?"
+            },
+            {
+                type: "input",
+                name: "engineerID",
+                message: "What is your engineer's ID?"
+            },
+            {
+                type: "input",
+                name: "engineerEmail",
+                message: "What is your engineer's email?"
+            },
+            {
+                type: "input",
+                name: "engineerGithub",
+                message: "What is your engineer's GitHub?"
+            }
+        ]).then(response => {
+            const engineer = new Engineer (response.engineerName,response.engineerID,response.engineerEmail,response.engineerGithub)
+            teamMembers.push (engineer)
+            createTeam()
+        })
+    }
+    
+        function addIntern () {
+            inquirer.prompt([
+                {
+                    type: "input",
+                    name: "internName",
+                    message: "What is your intern's name?"
+                },
+                {
+                    type: "input",
+                    name: "internID",
+                    message: "What is your intern's ID?"
+                },
+                {
+                    type: "input",
+                    name: "internEmail",
+                    message: "What is your intern's email?"
+                },
+                {
+                    type: "input",
+                    name: "internSchool",
+                    message: "What is your intern's school?"
+                }
+            ]).then(response => {
+                const intern = new Intern (response.internName,response.internID,response.internEmail,response.internSchool)
+                teamMembers.push (intern)
+                createTeam()
+            })
+        }
+    function buildTeam () {
+        if (!fs.existsSync (OUTPUT_DIR)){
+            fs.mkdirSync (OUTPUT_DIR)
+        }
+        fs.writeFileSync(outputPath, render(teamMembers), "utf-8")
+    }
+    createManager()
 }
 
 
